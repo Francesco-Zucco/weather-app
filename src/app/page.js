@@ -51,6 +51,7 @@ export default function Home() {
   return (
     <div className="relative h-screen w-full flex flex-col  gap-4 ">
       <video
+        playsInline
         key={video}
         autoPlay
         loop
@@ -67,6 +68,7 @@ export default function Home() {
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
+            className="border"
           />
           <button onClick={getWeather}>Search</button>
         </nav>
@@ -99,7 +101,7 @@ export default function Home() {
             )
           )}
         </div>
-        <div className=" flex  overflow-x-auto gap-3  scroll-smooth  rounded-2xl bg-white/10 + backdrop-blur-xs ">
+        <div className=" flex  overflow-x-auto gap-3  scroll-smooth  rounded-2xl bg-white/5  backdrop-blur-xs ">
           {loading ? (
             <p>Loading...</p>
           ) : error ? (
