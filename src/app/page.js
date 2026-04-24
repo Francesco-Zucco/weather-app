@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function Home() {
-  const [userInput, setUserInput] = useState("bucharest");
+  const [userInput, setUserInput] = useState("");
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -49,7 +49,7 @@ export default function Home() {
   }
 
   return (
-    <div className="relative h-screen w-full flex flex-col  gap-4 ">
+    <div className="relative h-[100dvh] w-full flex flex-col  gap-4 ">
       <video
         playsInline
         key={video}
