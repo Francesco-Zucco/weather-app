@@ -49,7 +49,9 @@ export default function Home() {
   }
 
   return (
-    <div className="relative h-[100dvh] w-full flex flex-col  gap-4 ">
+    <div
+      className={`relative h-[100dvh] w-full flex flex-col  gap-4 ${weather && weather.current.condition.text.includes("night") ? "bg-black" : ""} `}
+    >
       <video
         playsInline
         key={video}
