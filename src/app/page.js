@@ -88,8 +88,8 @@ export default function Home() {
                 <p className="text-white text-6xl font-extralight">
                   {weather.current.temp_c}°C
                 </p>
-                <div className="flex items-center gap-2">
-                  <p className="text-white/90">
+                <div className="flex items-center ">
+                  <p className="text-white/90 w-[64px] h[64px] text-center">
                     {weather.current.condition.text}
                   </p>
                   <Image
