@@ -1,12 +1,14 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
+import { useDragScroll } from "./hooks/useDragScroll";
 
 export default function Home() {
-  const [userInput, setUserInput] = useState("");
+  const [userInput, setUserInput] = useState("bucharest");
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const dragScrollRef = useDragScroll();
 
   const getWeather = async () => {
     if (!userInput.trim()) return;
@@ -23,11 +25,21 @@ export default function Home() {
     }
     setWeather(data);
     console.log(data);
-    setUserInput("");
-    console.log("is_day:", data.current.is_day);
-    console.log("localtime:", data.location.localtime);
   };
+  const hours = weather ? weather.forecast.forecastday[0].hour : [];
+  const localTime = weather?.location?.localtime;
+  const currentHour = localTime ? localTime.split(" ")[1].split(":")[0] : null;
 
+  const currentIndex = hours.findIndex((hour) => {
+    const hourNumber = hour.time.split(" ")[1].split(":")[0];
+    return hourNumber === currentHour;
+  });
+
+  const orderedHours = [
+    ...hours.slice(currentIndex),
+    ...hours.slice(0, currentIndex),
+  ];
+  console.log(currentHour);
   let video = "/cloudy.mp4";
 
   if (weather) {
@@ -70,7 +82,7 @@ export default function Home() {
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
-            className="border"
+            className="border text-base"
           />
           <button onClick={getWeather}>Search</button>
         </nav>
@@ -89,38 +101,54 @@ export default function Home() {
                   {weather.current.temp_c}°C
                 </p>
                 <div className="flex items-center ">
-                  <p className="text-white/90 w-[64px] h[64px] text-center">
+                  <p className="text-white/90 px-2  text-nowrap">
                     {weather.current.condition.text}
                   </p>
-                  <Image
+                  {/* <Image
                     src={`https:${weather.current.condition.icon}`}
                     alt={weather.current.condition.text}
                     width={64}
                     height={64}
-                  />
+                  /> */}
+                </div>
+                <div className="flex gap-2 text-white">
+                  <p>
+                    H:{" "}
+                    {Math.floor(weather.forecast.forecastday[0].day.maxtemp_c)}°
+                  </p>
+                  <p>
+                    L:{" "}
+                    {Math.floor(weather.forecast.forecastday[0].day.mintemp_c)}°
+                  </p>
                 </div>
               </div>
             )
           )}
         </div>
-        <div className=" flex  overflow-x-auto gap-3  scroll-smooth  rounded-2xl bg-white/5  backdrop-blur-xs ">
+        <div
+          ref={dragScrollRef}
+          className=" flex drag-scroll  overflow-x-auto gap-3 cursor-pointer  [&::-webkit-scrollbar]:hidden
+    [-ms-overflow-style:none]
+    [scrollbar-width:none]  rounded-2xl bg-white/5  backdrop-blur-xs "
+        >
           {loading ? (
             <p>Loading...</p>
           ) : error ? (
             <p>Error: {error}</p>
           ) : (
-            weather &&
-            weather.forecast.forecastday[0].hour.map((hour, index) => (
+            orderedHours.map((hour, index) => (
               <div
                 key={index}
                 className="min-w-[70px] flex-shrink-0 rounded-2xl p-3 flex flex-col items-center gap-1 scroll-smooth"
               >
                 <p className="text-white">
-                  {hour.time.split(" ")[1].split(":")[0]}
+                  {index === 0 ? "Now" : hour.time.split(" ")[1].split(":")[0]}
                 </p>
                 <Image
                   src={`https:${hour.condition.icon}`}
                   alt={hour.condition.text}
+                  draggable={false}
+                  className="select-none pointer-events-none [-webkit-user-drag:none]"
                   width={40}
                   height={40}
                 />
